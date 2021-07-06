@@ -2,6 +2,9 @@ import React from "react";
 import "./Home.css"
 import logo from "../../component/image/logo.png"
 import Ordenamiento from "../Ordenamiento/Ordenamiento"
+import Recipes from "../Recipes/Recipes";
+import Search from "../Search/Search"
+import Puntuacion from "../Puntuacion/Puntuacion";
 
 function Home(){
     return(
@@ -14,10 +17,11 @@ function Home(){
             <div className="padre">
                 <div className="filts">
                    <Ordenamiento/>
-                    {/* <Search/> */}
+                   <Search/> 
+                   <Puntuacion/>
                 </div>
             </div>
-            {/* <Countries/> */}
+            <Recipes/>
         </ul>
     </div>
     )
