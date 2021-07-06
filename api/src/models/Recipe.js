@@ -7,6 +7,7 @@ module.exports = (sequelize) => {
   sequelize.define('recipe', {
     id :{
       type : DataTypes.INTEGER,
+      defaultValue : UUIDV4,
       primaryKey : true,
       allowNull: false, 
     },

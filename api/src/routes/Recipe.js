@@ -110,4 +110,35 @@ router.get("/", async (req, res) => {
     
   });
 
+  router.post("/recipes", async(req,res)=>{     
+   
+       const {
+           
+              title,
+              image,
+              summary,
+              spoonacularScore,
+              healthScore,
+              analyzedInstructions,
+              diets,
+              
+            } = req.body;
+            try{
+                let newRecipe = await Recipe.create({
+                    title,
+                    image,
+                    summary,
+                    spoonacularScore,
+                    healthScore,
+                    analyzedInstructions,
+                });
+                await newRecipe.setType(diets);
+                res.json(newRecipe);
+       
+       
+    }catch(error){
+        res.status(500).json(err);
+    }
+})
+
 module.exports = router;
