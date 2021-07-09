@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
   // defino el modelo
   sequelize.define('recipe', {
     id :{
-      type : DataTypes.INTEGER,
+      type : DataTypes.UUID,
       defaultValue : UUIDV4,
       primaryKey : true,
       allowNull: false, 
@@ -37,13 +37,13 @@ module.exports = (sequelize) => {
   // )
   //   },
   diets:{
-    type: DataTypes.TEXT(),
+   type: DataTypes.ARRAY(DataTypes.INTEGER)
   },
   summary: {
     type: DataTypes.TEXT(),
     allowNull: false
   },
-  aggregateLikes: {
+  spoonacularScore: {
     type: DataTypes.INTEGER,
     defaultValue : 0
   },
@@ -52,7 +52,7 @@ module.exports = (sequelize) => {
     defaultValue : 0
 
   },
-  instructions: {
+  analyzedInstructions: {
     type: DataTypes.TEXT
   }
   });

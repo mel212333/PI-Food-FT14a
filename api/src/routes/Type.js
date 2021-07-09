@@ -8,19 +8,10 @@ const{API_KEY}= process.env;
 const {DIETS_TYPE} = require('../constante');
 
 //>>>>>>>>> BUSQUEDA POR NAME Y GET GENERAL <<<<<<<<<//
-
-router.get("/", async (req, res) => {
-    try{
-       
-        
-        const dietas = await Type.findAll()
-        res.status(200).json(dietas)
-}catch(error){
-    console.log("errorrrrr")
-}
-});
-
-
+ router.get("/", async (req, res) => {
+        const diets = await Type.findAll()
+        return res.status(200).json(diets);
+ });
 
 
 module.exports = router;
