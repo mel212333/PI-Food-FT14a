@@ -20,22 +20,7 @@ module.exports = (sequelize) => {
     image:{
       type: DataTypes.STRING,
     },
-    // diets: {
-    //   type: DataTypes.ARRAY(DataTypes.ENUM(typeDiet)),
-    // },
-  //   diets: {
-  //     type: DataTypes.ENUM(
-  //       "gluten free",
-  //       "ketogenic",
-  //       "vegetarian",
-  //       "lacto ovo vegetarian",
-  //       "vegan",
-  //       "pescetarian",
-  //       "paleo",
-  //       "primal",
-  //       "whole30"
-  // )
-  //   },
+   
   diets:{
    type: DataTypes.ARRAY(DataTypes.INTEGER)
   },

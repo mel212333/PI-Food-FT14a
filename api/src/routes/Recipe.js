@@ -10,66 +10,70 @@ const{API_KEY}= process.env;
 //>>>>>>>>> BUSQUEDA POR NAME Y GET GENERAL <<<<<<<<<//
 
 router.get("/", async (req, res) => {
-    let {name} = req.query;
-
-    try{
-   
-        if(name){
-           let traeNombre = await Recipe.findAll({
-               where:{
-                   title:{
-                       [Op.like]: `%${name}%`,
-                   }
-               }, 
-               include: [Type],
-           })
+  let {name} = req.query;
+  let {tipoDieta} = req.query;
+  try{
+ 
+      if(name){
+         let traeNombre = await Recipe.findAll({
+             where:{
+                 title:{
+                     [Op.like]: `%${name}%`,
+                 }
+             }, 
+             include: [Type],
+         })
+    
+     let recipesApi = await axios(`https://api.spoonacular.com/recipes/complexSearch?addRecipeInformation=true&apiKey=${API_KEY}&query=${name}&number=9`)
+     //console.log("soy Api", recipesApi)
+    // let recipesBd = Recipe.findAll();
+     let recipes = await recipesApi.data.results.map((obj) =>{
+         var re = {
+             id: obj.id,
+             title: obj.title,
+             image: obj.image,
+             summary: obj.summary,
+             aggregateLikes: obj.aggregateLikes,
+             healthScore: obj.healthScore,
+             instructions: obj.analyzedInstructions.map((s)=>s.steps.map((p)=>p.step)),
+             diets: obj.diets,
+         };
+         return re;
+     });
+         res.json(recipes.concat(traeNombre))
       
-       let recipesApi = await axios(`https://api.spoonacular.com/recipes/complexSearch?addRecipeInformation=true&apiKey=${API_KEY}&query=${name}&number=100`)
-       //console.log("soy Api", recipesApi)
-      // let recipesBd = Recipe.findAll();
-       let recipes = await recipesApi.data.results.map((obj) =>{
-           var re = {
-               id: obj.id,
-               title: obj.title,
-               image: obj.image,
-               summary: obj.summary,
-               aggregateLikes: obj.aggregateLikes,
-               healthScore: obj.healthScore,
-               instructions: obj.analyzedInstructions.map((s)=>s.steps.map((p)=>p.step)),
-               diets: obj.diets,
-           };
-           return re;
-       });
-           res.json(recipes.concat(traeNombre))
-        
-       }else{
-           let recipesApi = await axios(`https://api.spoonacular.com/recipes/complexSearch?addRecipeInformation=true&apiKey=${API_KEY}&number=100`)
-       //console.log("soy Api", recipesApi)
-       let recipesBd = Recipe.findAll();
-       let recipes = await recipesApi.data.results.map((obj) =>{
-           var re = {
-               id: obj.id,
-               title: obj.title,
-               image: obj.image,
-               summary: obj.summary,
-               aggregateLikes: obj.aggregateLikes,
-               healthScore: obj.healthScore,
-               instructions: obj.analyzedInstructions.map((s)=>s.steps.map((p)=>p.step)),
-               diets: obj.diets,
-           };
-           return re;
-       });
-            res.json(recipes.concat(recipesBd))
-       }
-   }catch(error){
-        console.log("No existe el nombre de la receta")
-   }
-   })
+     }else{
+         let recipesApi = await axios(`https://api.spoonacular.com/recipes/complexSearch?addRecipeInformation=true&apiKey=${API_KEY}&number=9`)
+     //console.log("soy Api", recipesApi)
+     let recipesBd = Recipe.findAll();
+     let recipes = await recipesApi.data.results.map((obj) =>{
+         var re = {
+             id: obj.id,
+             title: obj.title,
+             image: obj.image,
+             summary: obj.summary,
+             aggregateLikes: obj.aggregateLikes,
+             healthScore: obj.healthScore,
+             instructions: obj.analyzedInstructions.map((s)=>s.steps.map((p)=>p.step)),
+             diets: obj.diets,
+         };
+         return re;
+     });
+          res.json(recipes.concat(recipesBd))
+     }
+     ///////Tipo de dieta
+
+     
+ }catch(error){
+      console.log("No existe el nombre de la receta")
+ }
+ })
+
 
 
 //>>>>>>>>> BUSQUEDA POR ID <<<<<<<<<//
 
- router.get("/:id", async (req,res) => {
+ router.get("/detalle/:id", async (req,res) => {
     let { id } = req.params;
     try {
       if (id.includes("-")) {
@@ -91,7 +95,7 @@ router.get("/", async (req, res) => {
               diets: recipeDB.diets,
               image: recipeDB.image,
           } 
-       //   console.log("soy Detalle", details)
+          console.log("soy Detalle", details)
          // console.log("doy recipeDB", recipeDB)
         
           res.send(details)
@@ -119,13 +123,10 @@ router.get("/", async (req, res) => {
     
   });
 
-  router.post("/", async(req,res)=>{     
-
+  router.post("/", async(req,res)=>{    
     const newRecipe = req.body;
-
     console.log(newRecipe);
-    try {
-       
+    try { 
       let [recipe] = await Recipe.findOrCreate({
         where: {
           id: uuidv4(),
@@ -137,8 +138,7 @@ router.get("/", async (req, res) => {
           image: newRecipe.image,
           diets: newRecipe.diets,
         }
-    })       
-            
+    })        
       await recipe.addType(newRecipe.diets);
       return res.send(recipe);
     } catch (error) {
